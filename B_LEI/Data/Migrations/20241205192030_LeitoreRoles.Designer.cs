@@ -4,6 +4,7 @@ using B_LEI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace B_LEI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241205192030_LeitoreRoles")]
+    partial class LeitoreRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,6 +35,10 @@ namespace B_LEI.Data.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Contacto")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DataCriada")
@@ -123,19 +130,19 @@ namespace B_LEI.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5c45d308-dcb8-42f2-9927-a0e250d1ff2c",
+                            Id = "32417a84-6228-430d-873a-64451883e7ee",
                             Name = "admin",
                             NormalizedName = "admin"
                         },
                         new
                         {
-                            Id = "a07ee143-6514-432a-9636-50ff5b4af7ac",
+                            Id = "c3ee67d6-f3c5-4ced-ad86-ddd057bf344e",
                             Name = "leitor",
                             NormalizedName = "leitor"
                         },
                         new
                         {
-                            Id = "372adf98-7c3d-4cbe-9e33-bf1fe80c6a34",
+                            Id = "8399a8c3-2b11-45c8-9caf-d46d99c099d0",
                             Name = "bibliotecario",
                             NormalizedName = "bibliotecario"
                         });
