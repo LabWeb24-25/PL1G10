@@ -1,8 +1,26 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model B_LEI.Views.Admin.AdminGerirModel
+
+@{
+    ViewData["Title"] = "B_LEI";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<header>
+    <div class="navbar-categorias">
+        <h2>Categoria</h2>
+        <a href="#">Ficção</a>
+        <a href="#">Arte e Cultura</a>
+        <a href="#">Saúde e Bem-Estar</a>
+        <a href="#">Negócios e Finanças</a>
+        <a href="#">Desporto e Aventura</a>
+        <a href="#">Romance</a>
+        <a href="#">Humor e Comédia</a>
+        <a href="#">Gastronomia</a>
+    </div>
+</header>
+
+<div class="search-container">
+    <!-- Input de pesquisa -->
+    <input type="text" placeholder="Pesquisar..." name="search">
+    <!-- Botão de envio -->
+    <button type="submit">&#128269;</button>
 </div>
