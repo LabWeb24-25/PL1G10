@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace B_LEI.Views.Admin
+namespace B_LEI.Areas.Admin
 {
     [Authorize(Roles = "admin")]
     public class AdminGerirModel : PageModel
