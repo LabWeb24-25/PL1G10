@@ -22,7 +22,7 @@ body, html {
     position: fixed; /* Fixa no lado esquerdo */
     top: 58px; /* Cola ao topo */
     left: 0; /* Cola à esquerda */
-    width: 200px; /* Largura da navbar */
+    width: 240px; /* Largura da navbar */
     background-color: #f4f4f4;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
@@ -92,3 +92,43 @@ body, html {
             background-color: #0056b3;
         }
 
+/*FOTO*/
+.image-container img {
+    margin-left: 120px;
+    width: calc(100% - 200px); /* Largura total desde o fim da navbar até o fim da página */
+    height: 100px;
+    margin-top: 50px; /* Espaçamento abaixo do botão de pesquisa */
+    border-radius: 10px 10px 0 0; /* Cantos arredondados */
+}
+
+/*MENU EM BAIXO DA FOTO*/
+
+.menu-bar {
+    margin-left: 120px;
+    width: 100%; /* Aumenta a largura do retângulo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    padding: 10px 0;
+    border-radius: 0 0 10px 10px; /* Cantos arredondados */
+}
+
+    .menu-bar a {
+        color: white;
+        text-decoration: none;
+        padding: 0 60px;
+        font-size: 24px;
+    }
+
+        .menu-bar a:hover {
+            color: #007BFF;
+        }
+
+/* Linha vertical separadora */
+.separator {
+    height: 20px;
+    width: 1px;
+    background-color: gray;
+    margin: 0 10px;
+}
