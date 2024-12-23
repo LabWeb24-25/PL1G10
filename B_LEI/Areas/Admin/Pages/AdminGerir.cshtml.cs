@@ -2,25 +2,26 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using B_LEI.Models; // <-- namespace onde vive a tua classe ApplicationUser
 
 namespace B_LEI.Areas.Admin
 {
     [Authorize(Roles = "admin")]
     public class AdminGerirModel : PageModel
     {
-        private readonly UserManager<IdentityUser> UserManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public IdentityUser? appUser;
+        public ApplicationUser? AppUser { get; set; }
 
-        public AdminGerirModel(UserManager<IdentityUser> userManager)
+        public AdminGerirModel(UserManager<ApplicationUser> userManager)
         {
-            UserManager = userManager;
+            _userManager = userManager;
         }
-        public void OnGet()
+
+        public async Task OnGetAsync()
         {
-            var task = UserManager.GetUserAsync(User);
-            task.Wait();
-            appUser = task.Result;
+            // Obtém o utilizador atual (cast do HttpContext.User)
+            AppUser = await _userManager.GetUserAsync(User);
         }
     }
 }

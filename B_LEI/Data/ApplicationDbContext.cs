@@ -27,6 +27,12 @@ namespace B_LEI.Data
             // Invoca primeiro a configuração base do Identity
             base.OnModelCreating(builder);
 
+            builder.Entity<Multa>()
+               .HasOne(m => m.User)
+               .WithMany()
+               .HasForeignKey(m => m.UserId)
+               .OnDelete(DeleteBehavior.Restrict);
+
             // Se quiseres manter as tabelas com nomes AspNetUsers, AspNetRoles, etc.:
             // Mapeamento do ApplicationUser para "AspNetUsers":
             builder.Entity<ApplicationUser>().ToTable("AspNetUsers");
@@ -34,8 +40,7 @@ namespace B_LEI.Data
             // Roles para "AspNetRoles"
             builder.Entity<IdentityRole>().ToTable("AspNetRoles");
 
-            // Se quiseres, mapeia também as outras tabelas do Identity:
-            // (Isto é opcional; se não fizeres, ficam com nomes por padrão do EF)
+           
             builder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles");
             builder.Entity<IdentityUserClaim<string>>().ToTable("AspNetUserClaims");
             builder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins");
