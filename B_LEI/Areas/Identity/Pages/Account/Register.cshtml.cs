@@ -129,6 +129,8 @@ namespace B_LEI.Areas.Identity.Pages.Account
             {
                 var user = new ApplicationUser()
                 {
+                    UserName = Input.Username,
+                    Email = Input.Email,
                     Morada = Input.Morada,
                     DataCriada = DateTime.Now,
                 };

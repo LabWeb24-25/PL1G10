@@ -1,6 +1,11 @@
+using System.Net.Mail;
+using System.Net;
 using B_LEI.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using B_LEI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +19,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 var app = builder.Build();
 
@@ -42,3 +49,5 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+
