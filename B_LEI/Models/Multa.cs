@@ -23,13 +23,10 @@
         public int? RequisicaoId { get; set; }
         public Requisicao? Requisicao { get; set; }
 
-        // Se usares Identity para saber qual foi o utilizador (Leitor) 
-        // penalizado, podes relacionar diretamente com o "ApplicationUser" 
-        // ou com a classe do teu utilizador
+    
 
         public string? UserId { get; set; }
-        // Se tiveres ApplicationUser, podes referenciar:
-        // public ApplicationUser User { get; set; }
+        public ApplicationUser? User { get; set; }
     }
 
 }
