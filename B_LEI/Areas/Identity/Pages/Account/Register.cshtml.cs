@@ -127,7 +127,7 @@ namespace B_LEI.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new Leitor()
+                var user = new ApplicationUser()
                 {
                     Morada = Input.Morada,
                     DataCriada = DateTime.Now,
