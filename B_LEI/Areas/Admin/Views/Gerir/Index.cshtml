@@ -1,11 +1,15 @@
 ﻿@model IEnumerable<B_LEI.Models.ApplicationUser>
 
 @{
-    ViewData["Title"] = "Gerir";
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Gerir</h1>
+<h1>Lista de Usuários</h1>
 
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -34,11 +38,16 @@
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <!-- Botão de Editar -->
+                    <a class="btn btn-info" href="/Admin/Gerir/Edit/@item.Id">Edit</a> |
+                    <!-- Botão de Detalhes -->
+                    <a class="btn btn-info" href="/Admin/Gerir/Details/@item.Id">Details</a> |
+                    <!-- Botão de Excluir -->
+                    <a class="btn btn-danger" href="/Admin/Gerir/Delete/@item.Id">Delete</a>
+
             </td>
         </tr>
 }
     </tbody>
 </table>
+
