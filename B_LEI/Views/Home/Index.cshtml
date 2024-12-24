@@ -1,4 +1,4 @@
-﻿@model B_LEI.Areas.Admin.AdminGerirModel
+﻿@model IEnumerable<B_LEI.Models.Livro>
 
 @{
     ViewData["Title"] = "B_LEI";
@@ -7,22 +7,33 @@
 <header>
     <div class="navbar-categorias">
         <h2>Categoria</h2>
-        <a href="#">Ficção</a>
-        <a href="#">Arte e Cultura</a>
-        <a href="#">Saúde e Bem-Estar</a>
-        <a href="#">Negócios e Finanças</a>
-        <a href="#">Desporto e Aventura</a>
-        <a href="#">Romance</a>
-        <a href="#">Humor e Comédia</a>
-        <a href="#">Gastronomia</a>
+        @foreach (var cat in ViewBag.Categorias)
+        {
+            <a href="?categoria=@cat.Nome">@cat.Nome</a>
+        }
     </div>
 </header>
 
+<!-- Filtros -->
 <div class="search-container">
-    <!-- Input de pesquisa -->
-    <input type="text" placeholder="Pesquisar..." name="search">
-    <!-- Botão de envio -->
-    <button type="submit">&#128269;</button>
+    <form method="get" action="">
+        <input type="text" name="search" placeholder="Buscar por título ou autor..." value="@ViewContext.HttpContext.Request.Query["search"]" />
+        <select name="categoria">
+            <option value="">Todas as Categorias</option>
+            @foreach (var cat in ViewBag.Categorias)
+            {
+                @if (ViewContext.HttpContext.Request.Query["categoria"] == cat)
+                {
+                    <option value="@cat" selected="selected">@cat</option>
+                }
+                else
+                {
+                    <option value="@cat">@cat</option>
+                }
+            }
+        </select>
+        <button type="submit">&#128269;</button>
+    </form>
 </div>
 
 <!-- Imagem adicionada abaixo da barra de pesquisa -->
@@ -37,4 +48,38 @@
     <a href="#">INFORMAÇÕES DA BIBLIOTECA</a>
     <div class="separator"></div>
     <a href="#">FALE COM O SUPORTE</a>
+</div>
+
+<!-- Lista de Livros -->
+<div class="book-list">
+    <h3>Livros Disponíveis</h3>
+    <div class="row">
+        @foreach (var livro in Model)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <img class="card-img-top" src="@livro.Capa" alt="Capa do Livro">
+                    <div class="card-body">
+                        <h5 class="card-title">@livro.Titulo</h5>
+                        <p class="card-text">Autor: @livro.Autor?.Nome</p>
+                        <p class="card-text">Categoria: @livro.Categoria?.Nome</p>
+                        <p class="card-text"><small>@livro.AnoPublicacao</small></p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Lista de categortias -->
+<div class="navbar-categorias">
+    <h2>Livros</h2>
+    <ul class="list-group">
+        @foreach (var cat in ViewBag.Categorias)
+        {
+            <li class="list-group-item">
+                <a href="?categoria=@cat.Nome">@cat.Nome</a>
+            </li>
+        }
+    </ul>
 </div>

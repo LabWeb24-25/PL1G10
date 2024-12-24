@@ -4,6 +4,7 @@ using B_LEI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace B_LEI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241224140149_okok")]
+    partial class okok
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -234,7 +237,7 @@ namespace B_LEI.Data.Migrations
                             LivroId = 1,
                             AnoPublicacao = 1954,
                             AutorId = 1,
-                            Capa = "/images/senhor_dos_aneis.png",
+                            Capa = "C:\\Users\\Daniel\\source\\repos\\LabWeb24-25\\PL1G10\\B_LEI\\wwwroot\\images\\Senhor Dos Aneis.png",
                             CategoriaId = 1,
                             Descricao = "Um clássico da fantasia.",
                             Edicao = "1ª",
@@ -411,19 +414,19 @@ namespace B_LEI.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "450a4f12-cd82-41f4-848a-21f2c91f7f2b",
+                            Id = "e47f57ff-4ef7-4e16-a0e2-48452893ec22",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "f86a927c-4d86-4f4a-8e2c-288151689fd6",
+                            Id = "5030317e-ba4d-418a-a1f0-ddacaa679735",
                             Name = "leitor",
                             NormalizedName = "LEITOR"
                         },
                         new
                         {
-                            Id = "6fa224f8-9e73-4f34-9153-2a7d9514050b",
+                            Id = "cb9c5106-3a31-4623-809b-34291437afbb",
                             Name = "bibliotecario",
                             NormalizedName = "BIBLIOTECARIO"
                         });

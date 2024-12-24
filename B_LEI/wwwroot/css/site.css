@@ -132,3 +132,52 @@ body, html {
     background-color: gray;
     margin: 0 10px;
 }
+
+.book-list {
+    max-height: 600px; /* Altura máxima da lista */
+    overflow-y: auto; /* Ativar rolagem vertical */
+    padding: 20px;
+    background-color: #f9f9f9; /* Cor de fundo para destacar */
+}
+
+.book-list .card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+}
+
+.book-list .card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-categorias {
+    max-width: 200px;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.navbar-categorias h2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.navbar-categorias ul {
+    list-style: none;
+    padding: 0;
+}
+
+.navbar-categorias ul li a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+    padding: 5px;
+    transition: background-color 0.3s;
+}
+
+.navbar-categorias ul li a:hover {
+    background-color: #ddd;
+}
