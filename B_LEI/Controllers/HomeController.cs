@@ -1,6 +1,7 @@
 using B_LEI.Data;
 using B_LEI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Linq;
 
@@ -22,7 +23,10 @@ namespace B_LEI.Controllers
         public IActionResult Index(string search, string categoria)
         {
             // Consulta inicial para obter os livros
-            var livros = _context.Livros.AsQueryable();
+            var livros = _context.Livros
+        .Include(l => l.Autor) // Inclui o Autor relacionado
+        .Include(l => l.Categoria) // Inclui a Categoria relacionada
+        .AsQueryable();
 
             // Filtro por categoria
             if (!string.IsNullOrEmpty(categoria))

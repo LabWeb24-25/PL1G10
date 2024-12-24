@@ -18,23 +18,10 @@
 <div class="search-container">
     <form method="get" action="">
         <input type="text" name="search" placeholder="Buscar por título ou autor..." value="@ViewContext.HttpContext.Request.Query["search"]" />
-        <select name="categoria">
-            <option value="">Todas as Categorias</option>
-            @foreach (var cat in ViewBag.Categorias)
-            {
-                @if (ViewContext.HttpContext.Request.Query["categoria"] == cat)
-                {
-                    <option value="@cat" selected="selected">@cat</option>
-                }
-                else
-                {
-                    <option value="@cat">@cat</option>
-                }
-            }
-        </select>
         <button type="submit">&#128269;</button>
     </form>
 </div>
+
 
 <!-- Imagem adicionada abaixo da barra de pesquisa -->
 <div class="image-container">
@@ -63,7 +50,7 @@
                         <h5 class="card-title">@livro.Titulo</h5>
                         <p class="card-text">Autor: @livro.Autor?.Nome</p>
                         <p class="card-text">Categoria: @livro.Categoria?.Nome</p>
-                        <p class="card-text"><small>@livro.AnoPublicacao</small></p>
+                        <p class="card-text">Data de Publicação: <small>@livro.AnoPublicacao</small></p>
                     </div>
                 </div>
             </div>
