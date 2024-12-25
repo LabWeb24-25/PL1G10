@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using B_LEI.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace B_LEI.Data
@@ -9,5 +10,7 @@ namespace B_LEI.Data
             : base(options)
         {
         }
+
+        public DbSet<Utilizador> Utilizadores {  get; set; }
     }
 }
