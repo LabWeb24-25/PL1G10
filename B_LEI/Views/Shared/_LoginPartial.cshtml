@@ -22,10 +22,10 @@
 		else if (User.IsInRole("bibliotecario"))
         {
             <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="Livros" asp-action="Index">GerirUtilizadores</a>
+                <a class="nav-link text-dark" asp-controller="Autors" asp-action="Index">Gerir Autores</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="Bibliotecario" asp-page="/GerirLivrosBibliotecario" title="Gerir Livros">Gerir Livros</a>
+                <a class="nav-link text-dark" asp-controller="Livros" asp-action="Index">Gerir Livros</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
