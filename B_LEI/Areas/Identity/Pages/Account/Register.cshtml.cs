@@ -29,24 +29,23 @@ namespace B_LEI.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
-
-            // Como o userStore pode não ser necessariamente um IUserEmailStore<ApplicationUser>,
-            // você pode precisar fazer cast explicitamente:
             _emailStore = GetEmailStore();
-
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         [BindProperty]
@@ -58,6 +57,10 @@ namespace B_LEI.Areas.Identity.Pages.Account
 
         public class InputModel
         {
+            [Required]
+            public string Name { get; set; }
+            [Required]
+            public string Role { get; set; }
             [Required]
             public string Username { get; set; }
 
@@ -91,6 +94,7 @@ namespace B_LEI.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            ViewData["roles"] = _roleManager.Roles.ToList();
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -104,6 +108,7 @@ namespace B_LEI.Areas.Identity.Pages.Account
             {
                 // Em vez de instanciar IdentityUser, instancie ApplicationUser
                 var user = CreateUser();
+                user.Name = Input.Name;
                 user.Morada = Input.Morada;
                 user.DataCriada = DateTime.Now;
 
@@ -117,8 +122,8 @@ namespace B_LEI.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // Atribui a role "leitor"
-                    await _userManager.AddToRoleAsync(user, "leitor");
+                    // Atribui a role
+                    await _userManager.AddToRoleAsync(user, Input.Role);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -153,6 +158,7 @@ namespace B_LEI.Areas.Identity.Pages.Account
             }
 
             // Se chegar aqui, algo falhou, reexibe o form
+            ViewData["roles"] = _roleManager.Roles.ToList();
             return Page();
         }
 

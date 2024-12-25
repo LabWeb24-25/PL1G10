@@ -8,7 +8,7 @@
 		if (User.IsInRole("admin"))
 		{
             <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Gerir" asp-action="Index">GerirUtilizadores</a>
+                <a class="nav-link text-dark" asp-controller="GerirUtilizadores" asp-action="Index">GerirUtilizadores</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>

@@ -19,6 +19,12 @@
             </div>
 
             <div class="form-floating mb-3">
+                <input asp-for="Input.Name" class="form-control" aria-required="true" />
+                <label asp-for="Input.Name">Nome</label>
+                <span asp-validation-for="Input.Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
                 <input asp-for="Input.Morada" class="form-control" aria-required="true" />
                 <label asp-for="Input.Morada">Morada</label>
                 <span asp-validation-for="Input.Morada" class="text-danger"></span>
@@ -45,6 +51,14 @@
             <div class="form-floating mb-3">
                 <input asp-for="Input.ConfirmPassword" class="form-control" aria-required="true" />
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <label asp-for="Input.Role"></label>
+				<select asp-for="Input.Role" class="form-control" asp-items='new SelectList(ViewBag.Roles, "Name", "Name", "Name")'>
+					<option value="">Select Role</option>
+                </select>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
 

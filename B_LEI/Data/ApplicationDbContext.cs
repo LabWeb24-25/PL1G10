@@ -47,13 +47,6 @@ namespace B_LEI.Data
             builder.Entity<IdentityUserToken<string>>().ToTable("AspNetUserTokens");
             builder.Entity<IdentityRoleClaim<string>>().ToTable("AspNetRoleClaims");
 
-            // Exemplo de seed das Roles:
-            var admin = new IdentityRole("admin") { NormalizedName = "ADMIN" };
-            var leitor = new IdentityRole("leitor") { NormalizedName = "LEITOR" };
-            var bibliotecario = new IdentityRole("bibliotecario") { NormalizedName = "BIBLIOTECARIO" };
-
-            // Tem de chamar HasData para inserir estas roles automaticamente na BD:
-            builder.Entity<IdentityRole>().HasData(admin, leitor, bibliotecario);
 
             // Adicionar Categoria
             builder.Entity<Categoria>().HasData(
