@@ -4,7 +4,9 @@ namespace B_LEI.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        // Nome do utilizador
+        //Motivo do bloqueio
+        public string? LockoutReason { get; set; }
+        // Nome 
         public string? Name { get; set; }
         // A data em que o registo do user foi criado
         public DateTime DataCriada { get; set; }

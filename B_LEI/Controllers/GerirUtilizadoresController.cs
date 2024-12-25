@@ -1,7 +1,9 @@
 ﻿using B_LEI.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace B_LEI.Controllers
 {
@@ -22,72 +24,76 @@ namespace B_LEI.Controllers
         }
 
         // GET: GerirUtilizadoresController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(string id) // Aqui é comum usar string como tipo de id no Identity
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+        // Ação para bloquear o usuário com um motivo
+        public async Task<IActionResult> Bloquear(string id, string motivo)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Bloquear o usuário definindo LockoutEnd para 100 anos no futuro
+            user.LockoutEnd = DateTimeOffset.UtcNow.AddYears(100);
+
+            // Definir o motivo do bloqueio
+            user.LockoutReason = motivo;
+
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            // Redirecionar de volta para a página de detalhes do usuário
+            return RedirectToAction(nameof(Details), new { id = user.Id });
         }
 
-        // GET: GerirUtilizadoresController/Create
-        public ActionResult Create()
+        // Ação para desbloquear o usuário
+        public async Task<IActionResult> Desbloquear(string id)
         {
-            return View();
-        }
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        // POST: GerirUtilizadoresController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            var user = await _context.Users
+                .FirstOrDefaultAsync(m => m.Id == id);
 
-        // GET: GerirUtilizadoresController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-        // POST: GerirUtilizadoresController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            // Remover o bloqueio definindo LockoutEnd como null
+            user.LockoutEnd = null;
+            user.LockoutReason = null; // Limpar o motivo de bloqueio
 
-        // GET: GerirUtilizadoresController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+            _context.Update(user);
+            await _context.SaveChangesAsync();
 
-        // POST: GerirUtilizadoresController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            // Redirecionar de volta para a página de detalhes do usuário
+            return RedirectToAction(nameof(Details), new { id = user.Id });
         }
     }
 }
