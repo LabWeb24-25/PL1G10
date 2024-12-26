@@ -91,7 +91,7 @@ namespace B_LEI.Controllers
                 newlivro.Descricao = livro.Descricao;
                 newlivro.Edicao = livro.Edicao;
                 newlivro.ISBN = livro.ISBN;
-
+                newlivro.Estado = livro.Estado; // Captura o valor do estado
 
                 //Salvar file
                 string FotoAutorPath = Path.GetFileName(livro.Capa.FileName);
