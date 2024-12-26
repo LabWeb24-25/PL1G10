@@ -1,4 +1,4 @@
-﻿@model B_LEI.Models.Autor
+﻿@model B_LEI.Models.AutorViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Nome" class="control-label"></label>
@@ -19,13 +19,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Foto" class="control-label"></label>
-                <input asp-for="Foto" class="form-control" />
+                <input type="file" asp-for="Foto" />
                 <span asp-validation-for="Foto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LivroId" class="control-label"></label>
-                <input asp-for="LivroId" class="form-control" />
-                <span asp-validation-for="LivroId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

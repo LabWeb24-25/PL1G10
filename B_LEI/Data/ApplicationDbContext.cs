@@ -47,37 +47,6 @@ namespace B_LEI.Data
             builder.Entity<IdentityUserToken<string>>().ToTable("AspNetUserTokens");
             builder.Entity<IdentityRoleClaim<string>>().ToTable("AspNetRoleClaims");
 
-
-            // Adicionar Categoria
-            builder.Entity<Categoria>().HasData(
-                new Categoria { CategoriaId = 1, Nome = "Ficção" }
-            );
-            // Adicionar Autor
-            builder.Entity<Autor>().HasData(
-                new Autor { AutorId = 1, Nome = "J.R.R. Tolkien" }
-            );
-
-            // Adicionar Editora
-            builder.Entity<Editora>().HasData(
-                new Editora { EditoraId = 1, Nome = "HarperCollins" }
-            );
-
-            // Adicionar Livro
-            builder.Entity<Livro>().HasData(
-                new Livro
-                {
-                    LivroId = 1,
-                    Titulo = "O Senhor dos Anéis",
-                    ISBN = "978-3-16-148410-0",
-                    Edicao = "1ª",
-                    AnoPublicacao = 1954,
-                    Capa = "/images/senhor_dos_aneis.png",
-                    Descricao = "Um clássico da fantasia.",
-                    AutorId = 1, // Relacionamento via ID
-                    CategoriaId = 1, // Relacionamento via ID
-                    EditoraId = 1 // Relacionamento via ID
-                }
-                );
         }
     }
 }
