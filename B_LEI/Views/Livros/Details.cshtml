@@ -6,6 +6,11 @@
 
 <h1>Details</h1>
 
+<form asp-action="Requisitar" method="post">
+    <input type="hidden" name="id" value="@Model.LivroId" />
+    <button type="submit" class="btn btn-primary">Requisitar Livro</button>
+</form>
+
 <div>
     <h4>Livro</h4>
     <hr />
