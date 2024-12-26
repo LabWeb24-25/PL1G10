@@ -19,6 +19,8 @@
 
         public int EditoraId { get; set; }
         public  Editora? Editora { get; set; }
+
+        public bool Estado { get; set; }
     }
 
 }

@@ -1,0 +1,25 @@
+﻿@model IEnumerable<B_LEI.Models.Requisicao>
+
+<h1>Minhas Requisições</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Título do Livro</th>
+            <th>Data de Requisição</th>
+            <th>Data de Entrega</th>
+            <th>Data de Devolução</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var requisicao in Model)
+        {
+            <tr>
+                <td>@requisicao.Livro?.Titulo</td>
+                <td>@requisicao.DataRequisicao.ToShortDateString()</td>
+                <td>@(requisicao.DataEntrega?.ToShortDateString() ?? "Pendente")</td>
+                <td>@(requisicao.DataDevolucao?.ToShortDateString() ?? "Pendente")</td>
+            </tr>
+        }
+    </tbody>
+</table>

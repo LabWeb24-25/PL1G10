@@ -1,5 +1,6 @@
 using B_LEI.Data;
 using B_LEI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -64,5 +65,25 @@ namespace B_LEI.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> MinhasRequisicoes()
+        {
+            var userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var requisicoes = await _context.Requisicoes
+                .Include(r => r.Livro)
+                .Where(r => r.UserId == userId)
+                .ToListAsync();
+
+            return View(requisicoes);
+        }
+
     }
 }

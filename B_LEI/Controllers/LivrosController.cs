@@ -209,5 +209,54 @@ namespace B_LEI.Controllers
         {
             return _context.Livros.Any(e => e.LivroId == id);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Requisitar(int id)
+        {
+            // Verifica se o livro existe
+            var livro = await _context.Livros.FindAsync(id);
+
+            if (livro == null)
+            {
+                return NotFound();
+            }
+
+            // Verifica se o livro já está indisponível
+            if (!livro.Estado)
+            {
+                TempData["Mensagem"] = "Este livro já está indisponível.";
+                return RedirectToAction("Details", new { id });
+            }
+
+            // Obtém o ID do usuário logado
+            var userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            // Cria uma nova requisição
+            var requisicao = new Requisicao
+            {
+                LivroId = id,
+                UserId = userId,
+                DataRequisicao = DateTime.Now
+            };
+
+            // Marca o livro como indisponível
+            livro.Estado = false;
+
+            // Salva as alterações no banco
+            _context.Requisicoes.Add(requisicao);
+            _context.Livros.Update(livro);
+            await _context.SaveChangesAsync();
+
+            // Mensagem de sucesso para o usuário
+            TempData["Mensagem"] = "Livro requisitado com sucesso!";
+            return RedirectToAction("Details", new { id });
+        }
+
+
     }
 }

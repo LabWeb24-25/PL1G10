@@ -37,6 +37,11 @@
     <a href="#">FALE COM O SUPORTE</a>
 </div>
 
+<!-- Botão para acessar Minhas Requisições -->
+<div class="text-end mb-3">
+    <a asp-action="MinhasRequisicoes" class="btn btn-secondary">Minhas Requisições</a>
+</div>
+
 <!-- Lista de Livros -->
 <div class="book-list">
     <h3>Livros Disponíveis</h3>
@@ -45,6 +50,7 @@
         {
             <div class="col-md-3 mb-4">
                 <div class="card">
+                    <a asp-controller="Livros" asp-action="Details" asp-route-id="@livro.LivroId" class="btn btn-info">Ver Detalhes</a>
                     <img src="~/FotoLivro/@livro.Capa" alt="@livro.Titulo" />
                     <div class="card-body">
                         <h5 class="card-title">@livro.Titulo</h5>
