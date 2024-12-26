@@ -20,13 +20,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Foto" class="control-label"></label>
-                <input asp-for="Foto" class="form-control" />
+                <img src="~/FotoAutor/@Model.Foto" alt="@Model.Nome" style="max-width: 100px; max-height: 100px;" />
                 <span asp-validation-for="Foto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LivroId" class="control-label"></label>
-                <input asp-for="LivroId" class="form-control" />
-                <span asp-validation-for="LivroId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

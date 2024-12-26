@@ -93,7 +93,7 @@ namespace B_LEI.Controllers
         }
 
         // GET: Autors/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, IFormFile Foto)
         {
             if (id == null)
             {
