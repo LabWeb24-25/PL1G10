@@ -55,9 +55,9 @@ namespace B_LEI.Controllers
         // GET: Livros/Create
         public IActionResult Create()
         {
-            ViewData["AutorId"] = new SelectList(_context.Autores, "AutorId", "AutorId");
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "CategoriaId");
-            ViewData["EditoraId"] = new SelectList(_context.Editoras, "EditoraId", "EditoraId");
+            ViewData["AutorId"] = new SelectList(_context.Autores, "AutorId", "Nome");
+            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "Nome");
+            ViewData["EditoraId"] = new SelectList(_context.Editoras, "EditoraId", "Nome");
             return View();
         }
 
