@@ -13,10 +13,12 @@ namespace B_LEI.Controllers
     public class AutorsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AutorsController(ApplicationDbContext context)
+        public AutorsController(ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _webHostEnvironment = environment;  
         }
 
         // GET: Autors
@@ -54,11 +56,36 @@ namespace B_LEI.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AutorId,Nome,Foto,LivroId")] Autor autor)
+        public async Task<IActionResult> Create([Bind("AutorId,Nome,Foto")] AutorViewModel autor)
         {
+
+            //Validar as extensões dos files
+            var FotoExtensions = new[] { ".jpg", ".jpeg", ".png" };
+
+            var extensions = Path.GetExtension(autor.Foto.FileName).ToLower();
+
+            if (!FotoExtensions.Contains(extensions))
+            {
+                ModelState.AddModelError("Foto", "Extensão inválida. Use .jpg, .jpeg ou .png");
+            }
+            extensions = Path.GetExtension(autor.Foto.FileName).ToLower();
+
             if (ModelState.IsValid)
             {
-                _context.Add(autor);
+                var newAutor = new Autor();
+                newAutor.Nome = autor.Nome;
+                newAutor.Foto = autor.Foto.FileName;
+
+                //Salvar file
+                string FotoAutorPath = Path.GetFileName(autor.Foto.FileName);
+                string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "FotoAutor", FotoAutorPath);
+
+                using (var stream = new FileStream(uploadPath, FileMode.Create))
+                {
+                    await autor.Foto.CopyToAsync(stream);
+                }
+
+                _context.Add(newAutor);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

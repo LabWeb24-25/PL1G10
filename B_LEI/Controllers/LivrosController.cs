@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using B_LEI.Data;
 using B_LEI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Hosting;
 
 namespace B_LEI.Controllers
 {
@@ -15,10 +16,12 @@ namespace B_LEI.Controllers
     public class LivrosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public LivrosController(ApplicationDbContext context)
+        public LivrosController(ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _webHostEnvironment = environment;
         }
 
         // GET: Livros
@@ -63,11 +66,43 @@ namespace B_LEI.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LivroId,Titulo,ISBN,Edicao,AnoPublicacao,Capa,Descricao,AutorId,CategoriaId,EditoraId")] Livro livro)
+        public async Task<IActionResult> Create([Bind("LivroId,Titulo,ISBN,Edicao,AnoPublicacao,Capa,Descricao,AutorId,CategoriaId,EditoraId")] LivroViewModel livro)
         {
+            //Validar as extensões dos files
+            var FotoExtensions = new[] { ".jpg", ".jpeg", ".png" };
+
+            var extensions = Path.GetExtension(livro.Capa.FileName).ToLower();
+
+            if (!FotoExtensions.Contains(extensions))
+            {
+                ModelState.AddModelError("Foto", "Extensão inválida. Use .jpg, .jpeg ou .png");
+            }
+            extensions = Path.GetExtension(livro.Capa.FileName).ToLower();
+
             if (ModelState.IsValid)
             {
-                _context.Add(livro);
+                var newlivro = new Livro();
+                newlivro.Titulo = livro.Titulo;
+                newlivro.Capa = livro.Capa.FileName;
+                newlivro.AnoPublicacao = livro.AnoPublicacao;
+                newlivro.AutorId = livro.AutorId;
+                newlivro.CategoriaId = livro.CategoriaId;
+                newlivro.EditoraId = livro.EditoraId;
+                newlivro.Descricao = livro.Descricao;
+                newlivro.Edicao = livro.Edicao;
+                newlivro.ISBN = livro.ISBN;
+
+
+                //Salvar file
+                string FotoAutorPath = Path.GetFileName(livro.Capa.FileName);
+                string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "FotoLivro", FotoAutorPath);
+
+                using (var stream = new FileStream(uploadPath, FileMode.Create))
+                {
+                    await livro.Capa.CopyToAsync(stream);
+                }
+
+                _context.Add(newlivro);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
