@@ -1,4 +1,5 @@
 ﻿@model B_LEI.Models.Livro
+@Html.AntiForgeryToken()
 
 @{
     ViewData["Title"] = "Details";
@@ -6,72 +7,75 @@
 
 <h1>Details</h1>
 
-<form asp-action="Requisitar" method="post">
-    <input type="hidden" name="id" value="@Model.LivroId" />
-    <button type="submit" class="btn btn-primary">Requisitar Livro</button>
-</form>
+@if (Model.Estado)
+{
+    <a href="@Url.Action("RequisicaoConfirmada", "Livros", new { livroId = Model.LivroId })" class="btn btn-primary">Requisitar</a>
+    <span id="estadoDisponivel" style="color:green;">Disponível</span>
+}
+else
+{
+    <span style="color:red;">Indisponível</span>
+}
+
+
 
 <div>
     <h4>Livro</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Titulo)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Titulo)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ISBN)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ISBN)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Edicao)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Edicao)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.AnoPublicacao)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.AnoPublicacao)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Capa)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             <img src="~/FotoLivro/@Model.Capa" alt="@Model.Capa" style="max-width: 100px; max-height: 100px;" />
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Descricao)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Descricao)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Autor)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Autor.AutorId)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Categoria)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Categoria.CategoriaId)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Editora)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Editora.EditoraId)
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.LivroId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
 </div>

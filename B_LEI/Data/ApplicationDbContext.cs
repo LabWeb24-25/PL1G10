@@ -22,6 +22,7 @@ namespace B_LEI.Data
         public DbSet<Logs> Logs { get; set; }
         public DbSet<Requisicao> Requisicoes { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             // Invoca primeiro a configuração base do Identity

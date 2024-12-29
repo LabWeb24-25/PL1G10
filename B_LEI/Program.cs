@@ -6,8 +6,27 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        var user = context.HttpContext.User;
+        if (user.IsInRole("bibliotecario"))
+        {
+            context.Response.Redirect("/Livros/ListaRequisicoes");
+        }
+        else
+        {
+            context.Response.Redirect("/Home/Index");
+        }
+        return Task.CompletedTask;
+    };
+});
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -22,6 +41,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AuthenticatedUsers", policy =>
+        policy.RequireAuthenticatedUser());
+});
 
 var app = builder.Build();
 
@@ -43,11 +68,13 @@ else
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
@@ -62,5 +89,6 @@ app.UseEndpoints(endpoints =>
 app.MapRazorPages();
 
 app.Run();
+
 
 

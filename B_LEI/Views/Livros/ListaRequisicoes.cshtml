@@ -1,0 +1,49 @@
+﻿@model IEnumerable<B_LEI.Models.Requisicao>
+@{
+    ViewData["Title"] = "Lista de Requisições";
+}
+
+<h2>Lista de Requisições</h2>
+
+@if (ViewData["RequisicoesAtrasadas"] is List<B_LEI.Models.Requisicao> atrasadas && atrasadas.Any())
+{
+    <div class="alert alert-danger">
+        <strong>Atenção:</strong> Existem @atrasadas.Count requisições em atraso!
+    </div>
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Livro</th>
+            <th>Usuário</th>
+            <th>Data Requisição</th>
+            <th>Prazo Entrega</th>
+            <th>Data Devolução</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var requisicao in Model)
+        {
+            var status = "Normal";
+            if (requisicao.DataEntrega.HasValue && requisicao.DataEntrega.Value < DateTime.Now && !requisicao.DataDevolucao.HasValue)
+            {
+                status = "Atrasada";
+            }
+            else if (requisicao.DataDevolucao.HasValue)
+            {
+                status = "Concluída";
+            }
+
+            <tr class="@(status == "Atrasada" ? "table-danger" : "")">
+                <td>@requisicao.Livro.Titulo</td>
+                <td>@requisicao.User.UserName</td>
+                <td>@requisicao.DataRequisicao.ToString("dd/MM/yyyy")</td>
+                <td>@requisicao.DataEntrega?.ToString("dd/MM/yyyy")</td>
+                <td>@requisicao.DataDevolucao?.ToString("dd/MM/yyyy")</td>
+                <td>@status</td>
+            </tr>
+        }
+    </tbody>
+</table>

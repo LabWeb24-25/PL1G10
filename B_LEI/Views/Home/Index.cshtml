@@ -17,11 +17,11 @@
 <!-- Filtros -->
 <div class="search-container">
     <form method="get" action="">
-        <input type="text" name="search" placeholder="Buscar por título ou autor..." value="@ViewContext.HttpContext.Request.Query["search"]" />
+        <input type="text" name="search" placeholder="Buscar por título ou autor..."
+               value="@ViewContext.HttpContext.Request.Query["search"]" />
         <button type="submit">&#128269;</button>
     </form>
 </div>
-
 
 <!-- Imagem adicionada abaixo da barra de pesquisa -->
 <div class="image-container">
@@ -50,7 +50,9 @@
         {
             <div class="col-md-3 mb-4">
                 <div class="card">
-                    <a asp-controller="Livros" asp-action="Details" asp-route-id="@livro.LivroId" class="btn btn-info">Ver Detalhes</a>
+                    <a asp-controller="Livros" asp-action="Details" asp-route-id="@livro.LivroId" class="btn btn-info">
+                        Ver Detalhes
+                    </a>
                     <img src="~/FotoLivro/@livro.Capa" alt="@livro.Titulo" />
                     <div class="card-body">
                         <h5 class="card-title">@livro.Titulo</h5>
@@ -64,7 +66,7 @@
     </div>
 </div>
 
-<!-- Lista de categortias -->
+<!-- Lista de categorias -->
 <div class="navbar-categorias">
     <h2>Livros</h2>
     <ul class="list-group">
