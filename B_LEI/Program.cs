@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,29 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnValidatePrincipal = async context =>
+    {
+        var userManager = context.HttpContext.RequestServices.GetRequiredService<UserManager<ApplicationUser>>();
+        var userId = context.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId != null)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            var roles = await userManager.GetRolesAsync(user);
+
+            // Bloqueia o login se for Bibliotecário e não tiver sido confirmado pelo Admin
+            if (user != null && roles.Contains("bibliotecario") && !user.IsEmailConfirmedByAdmin)
+            {
+                context.RejectPrincipal(); // Rejeita o login
+                //ADICIONAR REDIRECT CASO QUEIRA REDIRECIONAR PARA UMA PÁGINA ESPECÍFICA
+                return;
+            }
+        }
+    };
+});
 
 builder.Services.AddAuthorization(options =>
 {

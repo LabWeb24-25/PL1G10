@@ -13,5 +13,8 @@ namespace B_LEI.Models
 
         // Morada do utilizador
         public string? Morada { get; set; }
+
+        // Para admin confirmar o email do bibliotecario
+        public bool IsEmailConfirmedByAdmin { get; set; }
     }
 }
