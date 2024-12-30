@@ -228,6 +228,23 @@ namespace B_LEI.Controllers
             {
                 return NotFound();
             }
+
+            // Verificar se o usuário logado é um administrador
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null)
+            {
+                var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+                // Se o usuário logado for administrador e está tentando editar outro administrador
+                if (currentUserRoles.Contains("admin") && userRoles.Contains("admin"))
+                {
+                    // Impedir que o administrador edite outro administrador
+                    TempData["Error"] = "Você não pode editar outro administrador.";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+
             return View(user);
         }
 
