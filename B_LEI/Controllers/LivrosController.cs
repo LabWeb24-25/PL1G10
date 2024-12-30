@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using B_LEI.Data;
 using B_LEI.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Hosting;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace B_LEI.Controllers
 {
@@ -17,37 +17,42 @@ namespace B_LEI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IEmailSender _emailSender;
 
-        public LivrosController(ApplicationDbContext context, IWebHostEnvironment environment)
+        public LivrosController(ApplicationDbContext context,
+                                IWebHostEnvironment environment,
+                                IEmailSender emailSender)
         {
             _context = context;
             _webHostEnvironment = environment;
+            _emailSender = emailSender;
         }
 
         // GET: Livros
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Livros.Include(l => l.Autor).Include(l => l.Categoria).Include(l => l.Editora);
+            var applicationDbContext = _context.Livros
+                .Include(l => l.Autor)
+                .Include(l => l.Categoria)
+                .Include(l => l.Editora);
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Livros/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var livro = await _context.Livros
                 .Include(l => l.Autor)
                 .Include(l => l.Categoria)
                 .Include(l => l.Editora)
                 .FirstOrDefaultAsync(m => m.LivroId == id);
+
             if (livro == null)
-            {
                 return NotFound();
-            }
 
             return View(livro);
         }
@@ -62,50 +67,49 @@ namespace B_LEI.Controllers
         }
 
         // POST: Livros/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LivroId,Titulo,ISBN,Edicao,AnoPublicacao,Capa,Descricao,AutorId,CategoriaId,EditoraId")] LivroViewModel livro)
+        public async Task<IActionResult> Create([Bind("LivroId,Titulo,ISBN,Edicao,Estado,AnoPublicacao,Capa,Descricao,AutorId,CategoriaId,EditoraId")] LivroViewModel livro)
         {
-            //Validar as extensões dos files
-            var FotoExtensions = new[] { ".jpg", ".jpeg", ".png" };
+            // Validar extensões
+            var fotoExtensions = new[] { ".jpg", ".jpeg", ".png" };
+            var extension = Path.GetExtension(livro.Capa.FileName).ToLower();
 
-            var extensions = Path.GetExtension(livro.Capa.FileName).ToLower();
-
-            if (!FotoExtensions.Contains(extensions))
+            if (!fotoExtensions.Contains(extension))
             {
                 ModelState.AddModelError("Foto", "Extensão inválida. Use .jpg, .jpeg ou .png");
             }
-            extensions = Path.GetExtension(livro.Capa.FileName).ToLower();
 
             if (ModelState.IsValid)
             {
-                var newlivro = new Livro();
-                newlivro.Titulo = livro.Titulo;
-                newlivro.Capa = livro.Capa.FileName;
-                newlivro.AnoPublicacao = livro.AnoPublicacao;
-                newlivro.AutorId = livro.AutorId;
-                newlivro.CategoriaId = livro.CategoriaId;
-                newlivro.EditoraId = livro.EditoraId;
-                newlivro.Descricao = livro.Descricao;
-                newlivro.Edicao = livro.Edicao;
-                newlivro.ISBN = livro.ISBN;
-                newlivro.Estado = livro.Estado; // Captura o valor do estado
+                var newLivro = new Livro
+                {
+                    Titulo = livro.Titulo,
+                    Capa = livro.Capa.FileName,
+                    AnoPublicacao = livro.AnoPublicacao,
+                    AutorId = livro.AutorId,
+                    CategoriaId = livro.CategoriaId,
+                    EditoraId = livro.EditoraId,
+                    Descricao = livro.Descricao,
+                    Edicao = livro.Edicao,
+                    ISBN = livro.ISBN,
+                    Estado = livro.Estado
+                };
 
-                //Salvar file
-                string FotoAutorPath = Path.GetFileName(livro.Capa.FileName);
-                string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "FotoLivro", FotoAutorPath);
+                // Salvar arquivo
+                string fotoAutorPath = Path.GetFileName(livro.Capa.FileName);
+                string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "FotoLivro", fotoAutorPath);
 
                 using (var stream = new FileStream(uploadPath, FileMode.Create))
                 {
                     await livro.Capa.CopyToAsync(stream);
                 }
 
-                _context.Add(newlivro);
+                _context.Add(newLivro);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["AutorId"] = new SelectList(_context.Autores, "AutorId", "AutorId", livro.AutorId);
             ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "CategoriaId", livro.CategoriaId);
             ViewData["EditoraId"] = new SelectList(_context.Editoras, "EditoraId", "EditoraId", livro.EditoraId);
@@ -116,15 +120,12 @@ namespace B_LEI.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var livro = await _context.Livros.FindAsync(id);
             if (livro == null)
-            {
                 return NotFound();
-            }
+
             ViewData["AutorId"] = new SelectList(_context.Autores, "AutorId", "AutorId", livro.AutorId);
             ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "CategoriaId", livro.CategoriaId);
             ViewData["EditoraId"] = new SelectList(_context.Editoras, "EditoraId", "EditoraId", livro.EditoraId);
@@ -132,16 +133,12 @@ namespace B_LEI.Controllers
         }
 
         // POST: Livros/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("LivroId,Titulo,ISBN,Edicao,AnoPublicacao,Capa,Descricao,AutorId,CategoriaId,EditoraId")] Livro livro)
         {
             if (id != livro.LivroId)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -153,16 +150,13 @@ namespace B_LEI.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!LivroExists(livro.LivroId))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["AutorId"] = new SelectList(_context.Autores, "AutorId", "AutorId", livro.AutorId);
             ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "CategoriaId", livro.CategoriaId);
             ViewData["EditoraId"] = new SelectList(_context.Editoras, "EditoraId", "EditoraId", livro.EditoraId);
@@ -173,19 +167,16 @@ namespace B_LEI.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var livro = await _context.Livros
                 .Include(l => l.Autor)
                 .Include(l => l.Categoria)
                 .Include(l => l.Editora)
                 .FirstOrDefaultAsync(m => m.LivroId == id);
+
             if (livro == null)
-            {
                 return NotFound();
-            }
 
             return View(livro);
         }
@@ -200,7 +191,6 @@ namespace B_LEI.Controllers
             {
                 _context.Livros.Remove(livro);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -210,53 +200,78 @@ namespace B_LEI.Controllers
             return _context.Livros.Any(e => e.LivroId == id);
         }
 
+        // POST: RequisitarLivro
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Requisitar(int id)
+        public async Task<IActionResult> RequisitarLivro(int livroId)
         {
-            // Verifica se o livro existe
-            var livro = await _context.Livros.FindAsync(id);
-
-            if (livro == null)
+            if (!User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                return Json(new { success = false, message = "É necessário estar autenticado para requisitar um livro." });
             }
 
-            // Verifica se o livro já está indisponível
-            if (!livro.Estado)
-            {
-                TempData["Mensagem"] = "Este livro já está indisponível.";
-                return RedirectToAction("Details", new { id });
-            }
-
-            // Obtém o ID do usuário logado
-            var userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
             {
-                return Unauthorized();
+                return Json(new { success = false, message = "Utilizador não encontrado." });
             }
 
-            // Cria uma nova requisição
-            var requisicao = new Requisicao
+            try
             {
-                LivroId = id,
-                UserId = userId,
-                DataRequisicao = DateTime.Now
-            };
+                var livro = await _context.Livros.FindAsync(livroId);
+                if (livro == null)
+                    return Json(new { success = false, message = "Livro não encontrado." });
 
-            // Marca o livro como indisponível
-            livro.Estado = false;
+                if (!livro.Estado)
+                    return Json(new { success = false, message = "Livro já está indisponível." });
 
-            // Salva as alterações no banco
-            _context.Requisicoes.Add(requisicao);
-            _context.Livros.Update(livro);
-            await _context.SaveChangesAsync();
+                // Atualizar estado do livro
+                livro.Estado = false;
+                _context.Entry(livro).State = EntityState.Modified;
 
-            // Mensagem de sucesso para o usuário
-            TempData["Mensagem"] = "Livro requisitado com sucesso!";
-            return RedirectToAction("Details", new { id });
+                // Registrar a requisição
+                var requisicao = new Requisicao
+                {
+                    LivroId = livroId,
+                    UserId = userId,
+                    DataRequisicao = DateTime.Now
+                };
+                _context.Requisicoes.Add(requisicao);
+
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Requisição registrada com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao registrar requisição: {ex.Message}");
+                return Json(new { success = false, message = "Ocorreu um erro ao processar a requisição. Tente novamente." });
+            }
         }
 
+        public IActionResult RequisicaoConfirmada()
+        {
+            ViewData["Message"] = TempData["SuccessMessage"] ?? "Sua requisição foi registrada com sucesso!";
+            return View();
+        }
+
+        [Authorize(Roles = "bibliotecario")]
+        public async Task<IActionResult> ListaRequisicoes()
+        {
+            // Busca todas as requisições e carrega os dados do livro e do usuário
+            var requisicoes = await _context.Requisicoes
+                .Include(r => r.Livro)
+                .Include(r => r.User)
+                .ToListAsync();
+
+            // Identifica as requisições atrasadas (prazo de entrega ultrapassado)
+            var hoje = DateTime.Now;
+            ViewData["RequisicoesAtrasadas"] = requisicoes
+                .Where(r => r.DataEntrega.HasValue && r.DataEntrega.Value < hoje && !r.DataDevolucao.HasValue)
+                .Count();
+
+            return View(requisicoes);
+        }
 
     }
 }

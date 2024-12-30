@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Confirmação de Requisição";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!string.IsNullOrEmpty(ViewData["Message"]?.ToString()))
+{
+    <div class="alert alert-success">
+        @ViewData["Message"]
+    </div>
+}
+
+<p>
+    <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Voltar para a Página Inicial</a>
+</p>
