@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using B_LEI.Models; // Importante: usar o namespace da sua classe ApplicationUser
+using B_LEI.Models; // Importante: usar o namespace da classe ApplicationUser
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -64,7 +64,6 @@ namespace B_LEI.Areas.Identity.Pages.Account
             [Required]
             public string Username { get; set; }
 
-            [Required]
             public string Morada { get; set; }
 
             public DateTime DataCriada { get; set; }
