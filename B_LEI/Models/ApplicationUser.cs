@@ -16,5 +16,8 @@ namespace B_LEI.Models
 
         // Para admin confirmar o email do bibliotecario
         public bool IsEmailConfirmedByAdmin { get; set; }
+
+        // Nome do Admin que verificou
+        public string? VerifiedByAdminUsername { get; set; }
     }
 }

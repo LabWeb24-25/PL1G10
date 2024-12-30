@@ -28,6 +28,7 @@
                 <th>Nome</th>
                 <th>E-mail</th>
                 <th>Verificado pelo Admin</th>
+                <th>Verificado por</th> <!-- Nova coluna -->
                 <th>Ações</th>
             </tr>
         </thead>
@@ -35,7 +36,7 @@
             @if (!Model.Any())
             {
                 <tr>
-                    <td colspan="5" class="text-center text-muted">Nenhum bibliotecário encontrado.</td>
+                    <td colspan="6" class="text-center text-muted">Nenhum bibliotecário encontrado.</td>
                 </tr>
             }
             else
@@ -55,6 +56,16 @@
                             else
                             {
                                 <span class="badge bg-danger">Não</span>
+                            }
+                        </td>
+                        <td>
+                            @if (bibliotecario.IsEmailConfirmedByAdmin)
+                            {
+                                @(bibliotecario.VerifiedByAdminUsername ?? "Não disponível")
+                            }
+                            else
+                            {
+                                <span class="text-muted">N/A</span>
                             }
                         </td>
                         <td>
