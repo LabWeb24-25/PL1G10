@@ -14,9 +14,6 @@
         <dt class="col-sm-2">Email:</dt>
         <dd class="col-sm-10">@Model.Email</dd>
 
-        <dt class="col-sm-2">Morada:</dt>
-        <dd class="col-sm-10">@Model.Morada</dd>
-
         <dt class="col-sm-2">Data de Criação:</dt>
         <dd class="col-sm-10">@Model.DataCriada</dd>
 
@@ -37,21 +34,24 @@
 
 <!-- Formulário de Bloqueio -->
 <div>
-    @if (Model.LockoutEnd == null || Model.LockoutEnd <= DateTimeOffset.Now)
+    @if (ViewBag.Roles != null && (ViewBag.Roles.Contains("leitor") || ViewBag.Roles.Contains("bibliotecario")))
     {
-        <form method="post" action="@Url.Action("Bloquear", "GerirUtilizadores", new { id = Model.Id })">
-            <div class="form-group">
-                <label for="motivo">Motivo do Bloqueio</label>
-                <textarea id="motivo" name="motivo" class="form-control" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-danger">Bloquear Usuário</button>
-        </form>
-    }
-    else
-    {
-        <a href="@Url.Action("Desbloquear", "GerirUtilizadores", new { id = Model.Id })" class="btn btn-success">
-            Desbloquear Usuário
-        </a>
+        @if (Model.LockoutEnd == null || Model.LockoutEnd <= DateTimeOffset.Now)
+        {
+            <form method="post" action="@Url.Action("Bloquear", "GerirUtilizadores", new { id = Model.Id })">
+                <div class="form-group">
+                    <label for="motivo">Motivo do Bloqueio</label>
+                    <textarea id="motivo" name="motivo" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-danger">Bloquear Usuário</button>
+            </form>
+        }
+        else
+        {
+            <a href="@Url.Action("Desbloquear", "GerirUtilizadores", new { id = Model.Id })" class="btn btn-success">
+                Desbloquear Usuário
+            </a>
+        }
     }
 </div>
 

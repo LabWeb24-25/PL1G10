@@ -7,6 +7,10 @@
 
 <h1>Users</h1>
 
+<div class="mb-3 text-end">
+    <a class="btn btn-primary" asp-action="Create">Criar novo Administrador</a>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -42,7 +46,8 @@
                     @Html.DisplayFor(userItem => user.Morada)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@user.Id">Details</a> 
+                    <a asp-action="Details" asp-route-id="@user.Id">Estado</a>
+                    <a asp-action="Edit" asp-route-id="@user.Id">Edit</a>
                 </td>
             </tr>
         }
