@@ -9,38 +9,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace B_LEI.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+
     public class LockoutModel : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        public string Reason { get; set; }
 
-        public LockoutModel(UserManager<ApplicationUser> userManager)
+        public void OnGet(string reason)
         {
-            _userManager = userManager;
-        }
-
-        public string LockoutReason { get; private set; }
-
-        public async Task OnGetAsync(string userId)
-        {
-            if (!string.IsNullOrEmpty(userId))
-            {
-                // Buscar o usuário diretamente pelo ID
-                var user = await _userManager.FindByIdAsync(userId);
-
-                if (user != null && user.LockoutEnabled)
-                {
-                    LockoutReason = user.LockoutReason; // Propriedade deve estar preenchida no banco
-                }
-                else
-                {
-                    LockoutReason = "Usuário não encontrado ou não está bloqueado.";
-                }
-            }
-            else
-            {
-                LockoutReason = "ID do usuário não fornecido.";
-            }
+            Reason = string.IsNullOrWhiteSpace(reason) ? "Sua conta está bloqueada. Entre em contato com o administrador." : reason;
         }
     }
 }

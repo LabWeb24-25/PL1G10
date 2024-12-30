@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using B_LEI.Data;
 using B_LEI.Models; // <-- Importante: onde está a class ApplicationUser
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -75,6 +76,18 @@ namespace B_LEI.Areas.Identity.Pages.Account
             {
                 // Buscamos o usuário via SignInManager.UserManager (que agora é UserManager<ApplicationUser>)
                 var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+
+                // Verifica se a conta está bloqueada
+                if (user.LockoutEnabled && user.LockoutEnd > DateTimeOffset.UtcNow)
+                {
+                    // Obtém o motivo do bloqueio
+                    var dbContext = HttpContext.RequestServices.GetService<ApplicationDbContext>();
+                    var LockoutReason = dbContext.Entry(user).Property<string>("LockoutReason").CurrentValue;
+
+                    // Redireciona para a página de bloqueio
+                    return RedirectToPage("./Lockout", new { reason = LockoutReason });
+                }
+
                 if (user != null)
                 {
                     var result = await _signInManager.PasswordSignInAsync(
