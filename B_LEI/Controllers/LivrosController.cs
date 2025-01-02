@@ -224,7 +224,7 @@ namespace B_LEI.Controllers
                 LivroId = livro.LivroId,
                 UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
                 DataRequisicao = DateTime.Now,
-                DataEntrega = DateTime.Now.AddDays(14) // Exemplo: prazo de 14 dias
+                DataEntrega = DateTime.Now.AddDays(15) // Prazo de 15 dias
             };
             _context.Requisicoes.Add(requisicao);
 
