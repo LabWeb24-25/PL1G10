@@ -80,6 +80,24 @@ namespace B_LEI.Controllers
                 ModelState.AddModelError("Foto", "Extensão inválida. Use .jpg, .jpeg ou .png");
             }
 
+            // Validar ISBN
+            if (!System.Text.RegularExpressions.Regex.IsMatch(livro.ISBN ?? "", @"^\d{13}$"))
+            {
+                ModelState.AddModelError("ISBN", "O ISBN deve ter exatamente 13 números.");
+            }
+
+            // Validar Edição
+            if (!System.Text.RegularExpressions.Regex.IsMatch(livro.Edicao ?? "", @"^\d+$"))
+            {
+                ModelState.AddModelError("Edicao", "A edição deve conter apenas números.");
+            }
+
+            // Validar Ano de Publicação
+            if (livro.AnoPublicacao > 2025)
+            {
+                ModelState.AddModelError("AnoPublicacao", "O ano de publicação não pode ser superior a 2025.");
+            }
+
             if (ModelState.IsValid)
             {
                 var newLivro = new Livro
@@ -224,7 +242,7 @@ namespace B_LEI.Controllers
                 LivroId = livro.LivroId,
                 UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
                 DataRequisicao = DateTime.Now,
-                DataEntrega = DateTime.Now.AddDays(14) // Exemplo: prazo de 14 dias
+                DataEntrega = DateTime.Now.AddDays(15) // Prazo de 15 dias
             };
             _context.Requisicoes.Add(requisicao);
 
