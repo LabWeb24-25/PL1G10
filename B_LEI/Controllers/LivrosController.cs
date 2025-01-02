@@ -80,6 +80,24 @@ namespace B_LEI.Controllers
                 ModelState.AddModelError("Foto", "Extensão inválida. Use .jpg, .jpeg ou .png");
             }
 
+            // Validar ISBN
+            if (!System.Text.RegularExpressions.Regex.IsMatch(livro.ISBN ?? "", @"^\d{13}$"))
+            {
+                ModelState.AddModelError("ISBN", "O ISBN deve ter exatamente 13 números.");
+            }
+
+            // Validar Edição
+            if (!System.Text.RegularExpressions.Regex.IsMatch(livro.Edicao ?? "", @"^\d+$"))
+            {
+                ModelState.AddModelError("Edicao", "A edição deve conter apenas números.");
+            }
+
+            // Validar Ano de Publicação
+            if (livro.AnoPublicacao > 2025)
+            {
+                ModelState.AddModelError("AnoPublicacao", "O ano de publicação não pode ser superior a 2025.");
+            }
+
             if (ModelState.IsValid)
             {
                 var newLivro = new Livro
