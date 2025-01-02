@@ -16,6 +16,8 @@ namespace B_LEI.Models
         // Ligação ao utilizador (Leitor) via Identity
         public string? UserId { get; set; } // ASP.NET Identity usa string para PK
         public ApplicationUser? User { get; set; }
+
+        public bool EstadoDevolucao { get; set; }
     }
 
 }

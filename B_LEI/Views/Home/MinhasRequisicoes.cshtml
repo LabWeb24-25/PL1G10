@@ -18,7 +18,7 @@
                 <td>@requisicao.Livro?.Titulo</td>
                 <td>@requisicao.DataRequisicao.ToShortDateString()</td>
                 <td>@(requisicao.DataEntrega?.ToShortDateString() ?? "Pendente")</td>
-                <td>@(requisicao.DataDevolucao?.ToShortDateString() ?? "Pendente")</td>
+                <td>@(requisicao.DataDevolucao?.ToShortDateString() ?? "Por entregar")</td>
             </tr>
         }
     </tbody>

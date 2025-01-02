@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace B_LEI.Controllers
 {
-    [Authorize(Roles = "bibliotecario")]
+
     public class LivrosController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -200,60 +200,76 @@ namespace B_LEI.Controllers
             return _context.Livros.Any(e => e.LivroId == id);
         }
 
-        // POST: RequisitarLivro
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RequisitarLivro(int livroId)
+        public async Task<IActionResult> RequisicaoConfirmada(int id)
         {
-            if (!User.Identity.IsAuthenticated)
+            var livro = await _context.Livros.FindAsync(id);
+            if (livro == null)
+                return NotFound();
+
+            // Verificar novamente se o livro está disponível
+            if (!livro.Estado)
             {
-                return Json(new { success = false, message = "É necessário estar autenticado para requisitar um livro." });
+                TempData["ErrorMessage"] = "Este livro já está requisitado.";
+                return RedirectToAction(nameof(Index));
             }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
+            // Alterar o estado do livro
+            livro.Estado = false;
+
+            // Criar uma nova requisição
+            var requisicao = new Requisicao
             {
-                return Json(new { success = false, message = "Utilizador não encontrado." });
-            }
+                LivroId = livro.LivroId,
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                DataRequisicao = DateTime.Now,
+                DataEntrega = DateTime.Now.AddDays(14) // Exemplo: prazo de 14 dias
+            };
+            _context.Requisicoes.Add(requisicao);
 
-            try
-            {
-                var livro = await _context.Livros.FindAsync(livroId);
-                if (livro == null)
-                    return Json(new { success = false, message = "Livro não encontrado." });
+            // Salvar alterações no banco de dados
+            _context.Update(livro);
+            await _context.SaveChangesAsync();
 
-                if (!livro.Estado)
-                    return Json(new { success = false, message = "Livro já está indisponível." });
+            TempData["SuccessMessage"] = "Livro requisitado com sucesso!";
+            return Redirect("/Home/Index/");
 
-                // Atualizar estado do livro
-                livro.Estado = false;
-                _context.Entry(livro).State = EntityState.Modified;
-
-                // Registrar a requisição
-                var requisicao = new Requisicao
-                {
-                    LivroId = livroId,
-                    UserId = userId,
-                    DataRequisicao = DateTime.Now
-                };
-                _context.Requisicoes.Add(requisicao);
-
-                await _context.SaveChangesAsync();
-
-                return Json(new { success = true, message = "Requisição registrada com sucesso!" });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro ao registrar requisição: {ex.Message}");
-                return Json(new { success = false, message = "Ocorreu um erro ao processar a requisição. Tente novamente." });
-            }
         }
 
-        public IActionResult RequisicaoConfirmada()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Entregar(int id)
         {
-            ViewData["Message"] = TempData["SuccessMessage"] ?? "Sua requisição foi registrada com sucesso!";
-            return View();
+            var requisicao = await _context.Requisicoes
+                .Include(r => r.Livro)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (requisicao == null)
+                return NotFound();
+
+            if (requisicao.DataDevolucao.HasValue)
+            {
+                TempData["ErrorMessage"] = "Este livro já foi devolvido.";
+                return RedirectToAction(nameof(ListaRequisicoes));
+            }
+
+            // Alterar o estado do livro para "disponível"
+            var livro = requisicao.Livro;
+            livro.Estado = true;
+
+            // Registrar a data de devolução na requisição
+            requisicao.DataDevolucao = DateTime.Now;
+
+            // Atualizar no banco de dados
+            _context.Update(livro);
+            _context.Update(requisicao);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Livro devolvido com sucesso!";
+            return RedirectToAction(nameof(ListaRequisicoes));
         }
+
 
         [Authorize(Roles = "bibliotecario")]
         public async Task<IActionResult> ListaRequisicoes()

@@ -9,13 +9,17 @@
 
 @if (Model.Estado)
 {
-    <a href="@Url.Action("RequisicaoConfirmada", "Livros", new { livroId = Model.LivroId })" class="btn btn-primary">Requisitar</a>
+    <form asp-action="RequisicaoConfirmada" asp-controller="Livros" method="post">
+        <input type="hidden" name="id" value="@Model.LivroId" />
+        <button type="submit" class="btn btn-primary">Requisitar</button>
+    </form>
     <span id="estadoDisponivel" style="color:green;">Disponível</span>
 }
 else
 {
     <span style="color:red;">Indisponível</span>
 }
+
 
 
 
