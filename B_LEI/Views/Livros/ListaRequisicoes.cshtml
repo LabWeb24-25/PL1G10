@@ -20,20 +20,20 @@
             <th>Data Requisição</th>
             <th>Prazo Entrega</th>
             <th>Data Devolução</th>
-            <th>Status</th>
+            <th>Estado Devolução</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var requisicao in Model)
         {
-            var status = "Normal";
+            var status = "Não Entregue";
             if (requisicao.DataEntrega.HasValue && requisicao.DataEntrega.Value < DateTime.Now && !requisicao.DataDevolucao.HasValue)
             {
                 status = "Atrasada";
             }
             else if (requisicao.DataDevolucao.HasValue)
             {
-                status = "Concluída";
+                status = "Entregue";
             }
 
             <tr class="@(status == "Atrasada" ? "table-danger" : "")">
@@ -43,6 +43,15 @@
                 <td>@requisicao.DataEntrega?.ToString("dd/MM/yyyy")</td>
                 <td>@requisicao.DataDevolucao?.ToString("dd/MM/yyyy")</td>
                 <td>@status</td>
+                <td>
+                    @if (!requisicao.DataDevolucao.HasValue)
+                    {
+                        <form asp-action="Entregar" asp-controller="Livros" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@requisicao.Id" />
+                            <button type="submit" class="btn btn-success btn-sm">Entregar</button>
+                        </form>
+                    }
+                </td>
             </tr>
         }
     </tbody>
