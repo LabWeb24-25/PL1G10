@@ -2,84 +2,118 @@
 @Html.AntiForgeryToken()
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do Livro";
 }
 
-<h1>Details</h1>
+<h1>Detalhes do Livro</h1>
 
-@if (Model.Estado)
-{
-    <form asp-action="RequisicaoConfirmada" asp-controller="Livros" method="post">
-        <input type="hidden" name="id" value="@Model.LivroId" />
-        <button type="submit" class="btn btn-primary">Requisitar</button>
-    </form>
-    <span id="estadoDisponivel" style="color:green;">Disponível</span>
-}
-else
-{
-    <span style="color:red;">Indisponível</span>
-}
+<!-- Verificação de Disponibilidade -->
+<div class="mb-3">
+    @if (Model.Estado)
+    {
+        <form asp-action="RequisicaoConfirmada" asp-controller="Livros" method="post">
+            <input type="hidden" name="id" value="@Model.LivroId" />
+            <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-lg">Requisitar</button>
+        </form>
+        <span id="estadoDisponivel" style="color:green;">Disponível</span>
+    }
+    else
+    {
+        <span style="color:red;">Indisponível</span>
+    }
+</div>
 
+<hr />
 
-
-
+<!-- Exibição dos Detalhes do Livro -->
 <div>
-    <h4>Livro</h4>
+    <h4>Informações do Livro</h4>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Titulo)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Titulo)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ISBN)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ISBN)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Edicao)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Edicao)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AnoPublicacao)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.AnoPublicacao)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Capa)
-        </dt>
-        <dd class="col-sm-10">
-            <img src="~/FotoLivro/@Model.Capa" alt="@Model.Capa" style="max-width: 100px; max-height: 100px;" />
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Autor)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Autor.AutorId)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Categoria)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Categoria.CategoriaId)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Editora)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Editora.EditoraId)
-        </dd>
-    </dl>
+    <div class="row mb-3">
+        <!-- Exibição da Capa do Livro -->
+        <div class="col-md-3">
+            @if (!string.IsNullOrEmpty(Model.Capa))
+            {
+                <img src="~/FotoLivro/@Model.Capa" alt="@Model.Titulo" class="img-fluid" style="max-width: 150px; max-height: 200px;" />
+            }
+            else
+            {
+                <span>Sem imagem de capa disponível</span>
+            }
+        </div>
+
+        <!-- Detalhes do Livro -->
+        <div class="col-md-9">
+            <dl class="row">
+                <!-- Título -->
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Titulo)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Titulo)
+                </dd>
+
+                <!-- ISBN -->
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.ISBN)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.ISBN)
+                </dd>
+
+                <!-- Edição -->
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Edicao)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Edicao)
+                </dd>
+
+                <!-- Ano de Publicação -->
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.AnoPublicacao)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.AnoPublicacao)
+                </dd>
+
+                <!-- Descrição -->
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Descricao)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Descricao)
+                </dd>
+
+                <!-- Autor -->
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Autor)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Autor.Nome) <!-- Exibindo o nome do autor -->
+                </dd>
+
+                <!-- Categoria -->
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Categoria)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Categoria.Nome) <!-- Exibindo o nome da categoria -->
+                </dd>
+
+                <!-- Editora -->
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Editora)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Editora.Nome) <!-- Exibindo o nome da editora -->
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<!-- Botões de Navegação -->
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-primary btn-lg rounded-pill shadow-lg">Voltar à Lista</a>
 </div>
