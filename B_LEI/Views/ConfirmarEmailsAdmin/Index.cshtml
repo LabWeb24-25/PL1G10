@@ -7,20 +7,6 @@
 <div class="container mt-4">
     <h1 class="text-center mb-4">Lista de Bibliotecários</h1>
 
-    <!-- Mensagens de sucesso ou erro -->
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success text-center">
-            @TempData["SuccessMessage"]
-        </div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger text-center">
-            @TempData["ErrorMessage"]
-        </div>
-    }
-
     <table class="table table-striped">
         <thead>
             <tr>

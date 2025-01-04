@@ -2,79 +2,88 @@
 
 @{
     ViewData["Title"] = "B_LEI";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<header>
-    <div class="navbar-categorias">
-        <h2>Categoria</h2>
-        @foreach (var cat in ViewBag.Categorias)
-        {
-            <a href="?categoria=@cat.Nome">@cat.Nome</a>
-        }
-    </div>
-</header>
-
-<!-- Filtros -->
-<div class="search-container">
-    <form method="get" action="">
-        <input type="text" name="search" placeholder="Buscar por título ou autor..."
-               value="@ViewContext.HttpContext.Request.Query["search"]" />
-        <button type="submit">&#128269;</button>
-    </form>
-</div>
-
-<!-- Imagem adicionada abaixo da barra de pesquisa -->
-<div class="image-container">
-    <img src="/images/fotocapa.png" alt="Capa" style="width:100%; height:auto;">
-</div>
-
-<!-- Menu em baixo da imagem -->
-<div class="menu-bar">
-    <a href="#">REQUISITAR LIVROS</a>
-    <div class="separator"></div>
-    <a href="#">INFORMAÇÕES DA BIBLIOTECA</a>
-    <div class="separator"></div>
-    <a href="#">FALE COM O SUPORTE</a>
-</div>
-
-<!-- Botão para acessar Minhas Requisições -->
-<div class="text-end mb-3">
-    <a asp-action="MinhasRequisicoes" class="btn btn-secondary">Minhas Requisições</a>
-</div>
-
-<!-- Lista de Livros -->
-<div class="book-list">
-    <h3>Livros Disponíveis</h3>
+<div class="container-fluid">
     <div class="row">
-        @foreach (var livro in Model)
-        {
-            <div class="col-md-3 mb-4">
-                <div class="card">
-                    <a asp-controller="Livros" asp-action="Details" asp-route-id="@livro.LivroId" class="btn btn-info">
-                        Ver Detalhes
-                    </a>
-                    <img src="~/FotoLivro/@livro.Capa" alt="@livro.Titulo" />
-                    <div class="card-body">
-                        <h5 class="card-title">@livro.Titulo</h5>
-                        <p class="card-text">Autor: @livro.Autor?.Nome</p>
-                        <p class="card-text">Categoria: @livro.Categoria?.Nome</p>
-                        <p class="card-text">Data de Publicação: <small>@livro.AnoPublicacao</small></p>
-                    </div>
+        <!-- Barra Vertical de Categorias -->
+        <nav class="col-md-3 col-lg-2 bg-light border-end py-4">
+            <h4 class="text-primary text-center mb-4">Categorias</h4>
+            <ul class="list-group">
+                @foreach (var cat in ViewBag.Categorias)
+                {
+                    <li class="list-group-item">
+                        <a href="?categoria=@cat.Nome" class="text-decoration-none text-dark">
+                            @cat.Nome
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+
+        <!-- Conteúdo Principal -->
+        <main class="col-md-9 col-lg-10 py-4">
+            <!-- Barra de Busca -->
+            <div class="mb-4">
+                <form method="get" action="" class="input-group">
+                    <input type="text" name="search" class="form-control form-control-lg" placeholder="Buscar por título ou autor..."
+                           value="@ViewContext.HttpContext.Request.Query["search"]" />
+                    <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </form>
+            </div>
+
+            <!-- Imagem de Capa -->
+            <div class="mb-4">
+                <img src="/images/fotocapa.png" alt="Capa" class="img-fluid rounded shadow-lg">
+            </div>
+
+            <!-- Menu Abaixo da Imagem -->
+            <div class="d-flex justify-content-center mb-4">
+                <a href="#" class="btn btn-secondary btn-lg rounded-pill shadow-sm mx-2">
+                    REQUISITAR LIVROS
+                </a>
+                <a href="#" class="btn btn-secondary btn-lg rounded-pill shadow-sm mx-2">
+                    INFORMAÇÕES DA BIBLIOTECA
+                </a>
+                <a href="#" class="btn btn-secondary btn-lg rounded-pill shadow-sm mx-2">
+                    FALE COM O SUPORTE
+                </a>
+            </div>
+
+            <!-- Botão Minhas Requisições -->
+            <div class="text-end mb-4">
+                <a asp-action="MinhasRequisicoes" class="btn btn-outline-secondary btn-lg shadow-sm">
+                    <i class="bi bi-journal-text"></i> Minhas Requisições
+                </a>
+            </div>
+
+            <!-- Lista de Livros -->
+            <div>
+                <h3 class="text-primary text-center mb-4">Livros Disponíveis</h3>
+                <div class="row g-4">
+                    @foreach (var livro in Model)
+                    {
+                        <div class="col-md-3">
+                            <div class="card shadow-sm">
+                                <img src="~/FotoLivro/@livro.Capa" alt="@livro.Titulo" class="card-img-top img-fluid">
+                                <div class="card-body">
+                                    <h5 class="card-title text-truncate">@livro.Titulo</h5>
+                                    <p class="card-text"><strong>Autor:</strong> @livro.Autor?.Nome</p>
+                                    <p class="card-text"><strong>Categoria:</strong> @livro.Categoria?.Nome</p>
+                                    <p class="card-text"><strong>Publicação:</strong> <small>@livro.AnoPublicacao</small></p>
+                                    <a asp-controller="Livros" asp-action="Details" asp-route-id="@livro.LivroId"
+                                       class="btn btn-primary btn-sm rounded-pill mt-2">
+                                        <i class="bi bi-info-circle"></i> Ver Detalhes
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
-        }
+        </main>
     </div>
-</div>
-
-<!-- Lista de categorias -->
-<div class="navbar-categorias">
-    <h2>Livros</h2>
-    <ul class="list-group">
-        @foreach (var cat in ViewBag.Categorias)
-        {
-            <li class="list-group-item">
-                <a href="?categoria=@cat.Nome">@cat.Nome</a>
-            </li>
-        }
-    </ul>
 </div>

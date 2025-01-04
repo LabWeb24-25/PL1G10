@@ -3,117 +3,110 @@
 
 @{
     ViewData["Title"] = "Detalhes do Livro";
+    var isUserAuthenticated = User.Identity.IsAuthenticated;
+    var isLeitor = User.IsInRole("leitor");
+    var isBibliotecario = User.IsInRole("bibliotecario");
+    var isAdmin = User.IsInRole("admin");
 }
 
-<h1>Detalhes do Livro</h1>
+<div class="container py-5">
+    <!-- Cabeçalho -->
+    <div class="text-center mb-4">
+        <h1 class="text-primary">Detalhes do Livro</h1>
+        <p class="text-muted">Veja abaixo as informações do livro selecionado.</p>
+    </div>
 
-<!-- Verificação de Disponibilidade -->
-<div class="mb-3">
-    @if (Model.Estado)
-    {
-        <form asp-action="RequisicaoConfirmada" asp-controller="Livros" method="post">
-            <input type="hidden" name="id" value="@Model.LivroId" />
-            <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-lg">Requisitar</button>
-        </form>
-        <span id="estadoDisponivel" style="color:green;">Disponível</span>
-    }
-    else
-    {
-        <span style="color:red;">Indisponível</span>
-    }
-</div>
-
-<hr />
-
-<!-- Exibição dos Detalhes do Livro -->
-<div>
-    <h4>Informações do Livro</h4>
-    <hr />
-    <div class="row mb-3">
-        <!-- Exibição da Capa do Livro -->
-        <div class="col-md-3">
-            @if (!string.IsNullOrEmpty(Model.Capa))
-            {
-                <img src="~/FotoLivro/@Model.Capa" alt="@Model.Titulo" class="img-fluid" style="max-width: 150px; max-height: 200px;" />
-            }
-            else
-            {
-                <span>Sem imagem de capa disponível</span>
-            }
+    <!-- Detalhes do Livro -->
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white text-center">
+            <h4>@Model?.Titulo</h4>
         </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Exibição da Capa -->
+                <div class="col-md-4 text-center">
+                    @if (!string.IsNullOrEmpty(Model.Capa))
+                    {
+                        <img src="~/FotoLivro/@Model.Capa" alt="@Model.Titulo" class="img-fluid rounded shadow" style="max-width: 200px; max-height: 300px;" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">Sem imagem de capa disponível</span>
+                    }
+                </div>
 
-        <!-- Detalhes do Livro -->
-        <div class="col-md-9">
-            <dl class="row">
-                <!-- Título -->
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.Titulo)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Titulo)
-                </dd>
+                <!-- Informações do Livro -->
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-4 text-secondary">Título:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Titulo)</dd>
 
-                <!-- ISBN -->
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.ISBN)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.ISBN)
-                </dd>
+                        <dt class="col-sm-4 text-secondary">ISBN:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.ISBN)</dd>
 
-                <!-- Edição -->
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.Edicao)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Edicao)
-                </dd>
+                        <dt class="col-sm-4 text-secondary">Edição:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Edicao)</dd>
 
-                <!-- Ano de Publicação -->
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.AnoPublicacao)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.AnoPublicacao)
-                </dd>
+                        <dt class="col-sm-4 text-secondary">Ano de Publicação:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.AnoPublicacao)</dd>
 
-                <!-- Descrição -->
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.Descricao)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Descricao)
-                </dd>
+                        <dt class="col-sm-4 text-secondary">Descrição:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Descricao)</dd>
 
-                <!-- Autor -->
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.Autor)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Autor.Nome) <!-- Exibindo o nome do autor -->
-                </dd>
+                        <dt class="col-sm-4 text-secondary">Autor:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Autor.Nome)</dd>
 
-                <!-- Categoria -->
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.Categoria)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Categoria.Nome) <!-- Exibindo o nome da categoria -->
-                </dd>
+                        <dt class="col-sm-4 text-secondary">Categoria:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Categoria.Nome)</dd>
 
-                <!-- Editora -->
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.Editora)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Editora.Nome) <!-- Exibindo o nome da editora -->
-                </dd>
-            </dl>
+                        <dt class="col-sm-4 text-secondary">Editora:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Editora.Nome)</dd>
+
+                        <dt class="col-sm-4 text-secondary">Estado:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Estado)
+                            {
+                                <span id="estadoDisponivel" style="color:green;">Disponível</span>
+                            }
+                            else
+                            {
+                                <span style="color:red;">Indisponível</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Botões de Navegação -->
-<div class="mb-3">
-    <a asp-action="Index" class="btn btn-primary btn-lg rounded-pill shadow-lg">Voltar à Lista</a>
+    <!-- Botões de Navegação e Requisitar -->
+    <div class="text-center mt-4">
+        @if (Model.Estado)
+        {
+            <form asp-action="RequisicaoConfirmada" asp-controller="Livros" method="post" style="display: inline;">
+                <input type="hidden" name="id" value="@Model.LivroId" />
+                <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-lg me-2">
+                    <i class="bi bi-bookmark-plus"></i> Requisitar
+                </button>
+            </form>
+        }
+
+        @if (!isUserAuthenticated || isLeitor || isAdmin)
+        {
+            <!-- Não autenticado, leitor ou admin: Apenas botão para página inicial -->
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg rounded-pill shadow">
+                <i class="bi bi-house-door"></i> Voltar à Página Inicial
+            </a>
+        }
+        else if (isBibliotecario)
+        {
+            <!-- Bibliotecário: Ambos os botões -->
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg rounded-pill shadow">
+                <i class="bi bi-house-door"></i> Voltar à Página Inicial
+            </a>
+            <a asp-action="Index" class="btn btn-secondary btn-lg rounded-pill shadow ms-2">
+                <i class="bi bi-arrow-left"></i> Voltar à Lista
+            </a>
+        }
+    </div>
 </div>
