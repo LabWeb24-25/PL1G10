@@ -53,14 +53,17 @@ builder.Services.ConfigureApplicationCookie(options =>
         if (userId != null)
         {
             var user = await userManager.FindByIdAsync(userId);
-            var roles = await userManager.GetRolesAsync(user);
-
-            // Bloqueia o login se for Bibliotecário e não tiver sido confirmado pelo Admin
-            if (user != null && roles.Contains("bibliotecario") && !user.IsEmailConfirmedByAdmin)
+            if (user != null)
             {
-                context.RejectPrincipal(); // Rejeita o login
-                //ADICIONAR REDIRECT CASO QUEIRA REDIRECIONAR PARA UMA PÁGINA ESPECÍFICA
-                return;
+                var roles = await userManager.GetRolesAsync(user);
+
+                // Bloqueia o login se for Bibliotecário e não tiver sido confirmado pelo Admin
+                if (roles.Contains("bibliotecario") && !user.IsEmailConfirmedByAdmin)
+                {
+                    context.RejectPrincipal(); // Rejeita o login
+                    // ADICIONAR REDIRECT CASO QUEIRA REDIRECIONAR PARA UMA PÁGINA ESPECÍFICA
+                    return;
+                }
             }
         }
     };
@@ -79,6 +82,52 @@ using(var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     SeedRoles.Seed(roleManager);
 }
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await SeedAdminUserAsync(services);
+}
+
+async Task SeedAdminUserAsync(IServiceProvider services)
+{
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    string adminEmail = "admin@gmail.com";
+    string adminPassword = "Asdf1*";
+
+    // Criar a role se não existir
+    if (!await roleManager.RoleExistsAsync("admin"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("admin"));
+    }
+
+    // Verifica se o utilizador já existe
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new ApplicationUser
+        {
+            UserName = "adminREI",
+            Email = adminEmail,
+            EmailConfirmed = true,
+            Name = "admin",
+            DataCriada = DateTime.Now
+        };
+
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, "admin");
+        }
+        else
+        {
+            throw new Exception("Erro ao criar utilizador administrador: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+        }
+    }
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

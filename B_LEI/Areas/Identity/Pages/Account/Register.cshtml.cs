@@ -93,7 +93,10 @@ namespace B_LEI.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            ViewData["roles"] = _roleManager.Roles.ToList();
+            // Filtra apenas as roles "bibliotecario" e "leitor"
+            ViewData["roles"] = _roleManager.Roles
+                .Where(r => r.Name == "bibliotecario" || r.Name == "leitor")
+                .ToList();
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
