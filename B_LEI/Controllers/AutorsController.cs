@@ -115,7 +115,7 @@ namespace B_LEI.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AutorId,Nome,Foto,LivroId")] Autor autor)
+        public async Task<IActionResult> Edit(int id, [Bind("AutorId,Nome,LivroId")] Autor autor, IFormFile? Foto)
         {
             if (id != autor.AutorId)
             {
@@ -126,7 +126,38 @@ namespace B_LEI.Controllers
             {
                 try
                 {
-                    _context.Update(autor);
+                    // Recupera o autor existente no banco de dados
+                    var autorExistente = await _context.Autores.FindAsync(id);
+
+                    if (autorExistente == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Atualiza os campos editados
+                    autorExistente.Nome = autor.Nome;
+
+                    // Se uma nova foto for enviada
+                    if (Foto != null && Foto.Length > 0)
+                    {
+                        // Define o nome do arquivo (pode ser o nome original ou gerado dinamicamente)
+                        var fileName = Path.GetFileName(Foto.FileName);
+
+                        // Caminho para salvar a foto no diretório "wwwroot/FotoAutor"
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "FotoAutor", fileName);
+
+                        // Salva o arquivo no sistema de arquivos
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await Foto.CopyToAsync(stream);
+                        }
+
+                        // Atualiza o campo "Foto" com o nome do arquivo salvo
+                        autorExistente.Foto = fileName;
+                    }
+
+                    // Atualiza os dados do autor no banco de dados
+                    _context.Update(autorExistente);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -140,8 +171,12 @@ namespace B_LEI.Controllers
                         throw;
                     }
                 }
+
+                // Redireciona para a página de índice (lista de autores)
                 return RedirectToAction(nameof(Index));
             }
+
+            // Retorna a view com os dados enviados em caso de erro de validação
             return View(autor);
         }
 
