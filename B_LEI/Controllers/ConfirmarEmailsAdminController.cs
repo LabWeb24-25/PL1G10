@@ -1,10 +1,12 @@
 ﻿using B_LEI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace B_LEI.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class ConfirmarEmailsAdminController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

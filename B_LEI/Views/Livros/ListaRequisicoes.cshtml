@@ -49,8 +49,8 @@
                             }
 
                             <tr class="text-center @(status == "Atrasada" ? "table-danger" : "")">
-                                <td>@requisicao.Livro.Titulo</td>
-                                <td>@requisicao.User.UserName</td>
+                                <td>@requisicao.Livro?.Titulo</td>
+                                <td>@requisicao.User?.UserName</td>
                                 <td>@requisicao.DataRequisicao.ToString("dd/MM/yyyy")</td>
                                 <td>@requisicao.DataEntrega?.ToString("dd/MM/yyyy")</td>
                                 <td>@requisicao.DataDevolucao?.ToString("dd/MM/yyyy")</td>

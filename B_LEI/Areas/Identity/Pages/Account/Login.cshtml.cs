@@ -74,22 +74,22 @@ namespace B_LEI.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                // Buscamos o usuário via SignInManager.UserManager (que agora é UserManager<ApplicationUser>)
+                // Procurar o usuário via SignInManager.UserManager (que agora é UserManager<ApplicationUser>)
                 var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
-
-                // Verifica se a conta está bloqueada
-                if (user.LockoutEnabled && user.LockoutEnd > DateTimeOffset.UtcNow)
-                {
-                    // Obtém o motivo do bloqueio
-                    var dbContext = HttpContext.RequestServices.GetService<ApplicationDbContext>();
-                    var LockoutReason = dbContext.Entry(user).Property<string>("LockoutReason").CurrentValue;
-
-                    // Redireciona para a página de bloqueio
-                    return RedirectToPage("./Lockout", new { reason = LockoutReason });
-                }
 
                 if (user != null)
                 {
+                    // Verifica se a conta está bloqueada
+                    if (user.LockoutEnabled && user.LockoutEnd > DateTimeOffset.UtcNow)
+                    {
+                        // Obtém o motivo do bloqueio
+                        var dbContext = HttpContext.RequestServices.GetService<ApplicationDbContext>();
+                        var LockoutReason = dbContext.Entry(user).Property<string>("LockoutReason").CurrentValue;
+
+                        // Redireciona para a página de bloqueio
+                        return RedirectToPage("./Lockout", new { reason = LockoutReason });
+                    }
+
                     var result = await _signInManager.PasswordSignInAsync(
                         user,
                         Input.Password,

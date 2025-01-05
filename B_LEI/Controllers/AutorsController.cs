@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using B_LEI.Data;
 using B_LEI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace B_LEI.Controllers
 {
+    [Authorize(Roles = "bibliotecario")]
     public class AutorsController : Controller
     {
         private readonly ApplicationDbContext _context;
