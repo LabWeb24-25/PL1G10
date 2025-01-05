@@ -140,20 +140,27 @@ namespace B_LEI.Controllers
             if (id == null)
                 return NotFound();
 
-            var livro = await _context.Livros.FindAsync(id);
+            var livro = await _context.Livros
+                .Include(l => l.Autor)  // Inclui o autor para exibir o nome
+                .Include(l => l.Categoria)  // Inclui a categoria para exibir o nome
+                .Include(l => l.Editora)  // Inclui a editora para exibir o nome
+                .FirstOrDefaultAsync(l => l.LivroId == id);  // Garante que o livro seja encontrado
+
             if (livro == null)
                 return NotFound();
 
-            ViewData["AutorId"] = new SelectList(_context.Autores, "AutorId", "AutorId", livro.AutorId);
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "CategoriaId", livro.CategoriaId);
-            ViewData["EditoraId"] = new SelectList(_context.Editoras, "EditoraId", "EditoraId", livro.EditoraId);
+            // Agora a SelectList usa os nomes das entidades
+            ViewData["AutorId"] = new SelectList(_context.Autores, "AutorId", "Nome", livro.AutorId);  // Exibe o nome do autor
+            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "Nome", livro.CategoriaId);  // Exibe o nome da categoria
+            ViewData["EditoraId"] = new SelectList(_context.Editoras, "EditoraId", "Nome", livro.EditoraId);  // Exibe o nome da editora
+
             return View(livro);
         }
 
         // POST: Livros/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("LivroId,Titulo,ISBN,Edicao,AnoPublicacao,Capa,Descricao,AutorId,CategoriaId,EditoraId")] Livro livro)
+        public async Task<IActionResult> Edit(int id, Livro livro, IFormFile Capa)
         {
             if (id != livro.LivroId)
                 return NotFound();
@@ -162,6 +169,24 @@ namespace B_LEI.Controllers
             {
                 try
                 {
+                    // Se um novo arquivo de capa for enviado
+                    if (Capa != null && Capa.Length > 0)
+                    {
+                        // Define o nome do arquivo, pode usar o nome original ou gerar um novo nome
+                        var fileName = Path.GetFileName(Capa.FileName);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "FotoLivro", fileName);
+
+                        // Salva o arquivo no diretório FotoLivro
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await Capa.CopyToAsync(stream);
+                        }
+
+                        // Atualiza a propriedade da capa com o caminho do arquivo salvo
+                        livro.Capa = fileName;
+                    }
+
+                    // Atualiza os dados do livro no banco de dados
                     _context.Update(livro);
                     await _context.SaveChangesAsync();
                 }
@@ -172,12 +197,16 @@ namespace B_LEI.Controllers
                     else
                         throw;
                 }
+
+                // Redireciona para a página de índice (lista de livros)
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["AutorId"] = new SelectList(_context.Autores, "AutorId", "AutorId", livro.AutorId);
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "CategoriaId", livro.CategoriaId);
-            ViewData["EditoraId"] = new SelectList(_context.Editoras, "EditoraId", "EditoraId", livro.EditoraId);
+            // Se o modelo não for válido, repõe as listas de seleção
+            ViewData["AutorId"] = new SelectList(_context.Autores, "AutorId", "Nome", livro.AutorId);
+            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "Nome", livro.CategoriaId);
+            ViewData["EditoraId"] = new SelectList(_context.Editoras, "EditoraId", "Nome", livro.EditoraId);
+
             return View(livro);
         }
 
@@ -220,6 +249,7 @@ namespace B_LEI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> RequisicaoConfirmada(int id)
         {
             var livro = await _context.Livros.FindAsync(id);
@@ -251,7 +281,7 @@ namespace B_LEI.Controllers
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Livro requisitado com sucesso!";
-            return Redirect("/Home/Index/");
+            return View("RequisicaoConfirmada", requisicao);
 
         }
 
