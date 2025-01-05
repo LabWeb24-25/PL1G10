@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace B_LEI.Controllers
 {
-
+    [Authorize(Roles = "bibliotecario")]
     public class LivrosController : Controller
     {
         private readonly ApplicationDbContext _context;
