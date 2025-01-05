@@ -60,7 +60,7 @@
 
             <div class="form-floating mb-3">
                 <label asp-for="Input.Role"></label>
-                <select asp-for="Input.Role" class="form-control" asp-items='new SelectList(ViewBag.Roles, "Name", "Name", "Name")' onchange="toggleFields()">
+                <select asp-for="Input.Role" class="form-control" asp-items='new SelectList(ViewBag.Roles, "Name", "Name")' onchange="toggleFields()">
                     <option value="">Select Role</option>
                 </select>
                 <span asp-validation-for="Input.Role" class="text-danger"></span>
